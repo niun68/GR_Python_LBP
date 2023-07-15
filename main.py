@@ -162,3 +162,12 @@ if __name__ == "__main__":
         print("The predicted gender is: female")
     elif prediction == 1:
         print("The predicted gender is: male")
+
+    test_image_2 = cv2.imread("image_f_1.jpg")
+
+    prediction2 = test_model(model, test_image_2)
+
+    if prediction2 == 0:
+        print("The predicted gender is: female")
+    elif prediction2 == 1:
+        print("The predicted gender is: male")
