@@ -3,7 +3,8 @@ import numpy as np
 from skimage.feature import local_binary_pattern
 from sklearn.svm import SVC
 from sklearn.preprocessing import LabelEncoder
-from sklearn.metrics import classification_report, accuracy_score, confusion_matrix
+from sklearn.metrics import classification_report, accuracy_score, confusion_matrix, precision_score, recall_score, \
+    f1_score
 import os
 import glob
 
@@ -130,6 +131,14 @@ def validate_model(calf, fmle_validation, mle_validation):
 
     accuracy = accuracy_score(y_true, y_pred)
     print("Accuracy: {:.2f}%".format(accuracy * 100))
+
+    precision = precision_score(y_true, y_pred)
+    recall = recall_score(y_true, y_pred)
+    f1 = f1_score(y_true, y_pred)
+
+    print("Precision: {:.2f}".format(precision))
+    print("Recall: {:.2f}".format(recall))
+    print("F1-score: {:.2f}".format(f1))
 
     print("Classification Report:")
     print(classification_report(y_true, y_pred, target_names=["female", "male"]))
