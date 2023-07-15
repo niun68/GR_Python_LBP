@@ -3,6 +3,7 @@ import numpy as np
 from skimage.feature import local_binary_pattern
 from sklearn.svm import SVC
 from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import classification_report, accuracy_score, confusion_matrix
 import os
 import glob
 
@@ -17,7 +18,7 @@ def preprocess_image(images, trgt_size=(224, 224), dtype=np.uint8):
             except Exception as e:
                 raise TypeError("The image data must be a NumPy array.") from e
 
-        print("Image shape before preprocessing:", img.shape)
+        # print("Image shape before preprocessing:", img.shape)
 
         if len(img.shape) != 3 or img.shape[2] != 3:
             if len(img.shape) == 2:
@@ -108,29 +109,33 @@ def test_model(calf, img):
 
 
 def validate_model(calf, fmle_validation, mle_validation):
-    correct = 0
-    # total = 0
+    y_true = []
+    y_pred = []
 
     for img in fmle_validation[:250]:
         lbp = preprocess_image([img], (224, 224))  # Pass a single image as a list
         lbp = lbp.flatten()
 
         pred = calf.predict([lbp])
-        if pred[0] == 0:  # 0 represents "female" in the label encoding
-            correct += 1
+        y_true.append(0)  # 0 represents "female" in the label encoding
+        y_pred.append(pred[0])
 
     for img in mle_validation[:250]:
         lbp = preprocess_image([img], (224, 224))  # Pass a single image as a list
         lbp = lbp.flatten()
 
         pred = calf.predict([lbp])
-        if pred[0] == 1:  # 1 represents "male" in the label encoding
-            correct += 1
+        y_true.append(1)  # 1 represents "male" in the label encoding
+        y_pred.append(pred[0])
 
-    total = len(fmle_validation) + len(mle_validation)
-    accuracy = correct / total
+    accuracy = accuracy_score(y_true, y_pred)
+    print("Accuracy: {:.2f}%".format(accuracy * 100))
 
-    print("Accuracy: {}%".format(accuracy * 100))
+    print("Classification Report:")
+    print(classification_report(y_true, y_pred, target_names=["female", "male"]))
+
+    print("Confusion Matrix:")
+    print(confusion_matrix(y_true, y_pred))
 
 
 if __name__ == "__main__":
